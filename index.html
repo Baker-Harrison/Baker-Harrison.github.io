@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARC Raiders Weapon Stats Dashboard</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b0f1a;
+      --panel: #121a2b;
+      --panel-2: #17233a;
+      --accent: #4fd1c5;
+      --accent-2: #7f9cf5;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --danger: #f87171;
+      font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #070a12 0%, #0b1223 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 32px 5vw 16px;
+    }
+
+    header h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.8rem, 2.5vw, 2.8rem);
+      letter-spacing: 0.02em;
+    }
+
+    header p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 720px;
+    }
+
+    main {
+      padding: 0 5vw 48px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 20px;
+    }
+
+    .stats {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      margin-top: 24px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 16px;
+      padding: 16px 18px;
+      box-shadow: 0 8px 20px rgba(8, 15, 35, 0.4);
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 0.95rem;
+      color: var(--muted);
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    .card .value {
+      font-size: 1.7rem;
+      font-weight: 600;
+    }
+
+    .filters {
+      margin-top: 24px;
+      padding: 18px;
+      background: var(--panel-2);
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+
+    .filters label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    select,
+    input[type="search"] {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: #0f172a;
+      color: var(--text);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .button {
+      background: rgba(79, 209, 197, 0.16);
+      border: 1px solid rgba(79, 209, 197, 0.5);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    .button.active {
+      background: rgba(127, 156, 245, 0.2);
+      border-color: rgba(127, 156, 245, 0.7);
+    }
+
+    .chart {
+      margin-top: 24px;
+      padding: 20px;
+      background: var(--panel);
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+    }
+
+    .chart h2 {
+      margin: 0 0 16px;
+      font-size: 1.1rem;
+    }
+
+    .bar-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .bar {
+      display: grid;
+      grid-template-columns: 140px 1fr 60px;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.9rem;
+    }
+
+    .bar span {
+      color: var(--muted);
+    }
+
+    .bar .track {
+      height: 10px;
+      background: #0f172a;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar .fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      border-radius: inherit;
+    }
+
+    .table-wrap {
+      margin-top: 24px;
+      background: var(--panel);
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    th,
+    td {
+      padding: 12px 14px;
+      text-align: left;
+    }
+
+    th {
+      background: #0f172a;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.75rem;
+    }
+
+    tbody tr:nth-child(even) {
+      background: rgba(15, 23, 42, 0.7);
+    }
+
+    tbody tr:hover {
+      background: rgba(79, 209, 197, 0.08);
+    }
+
+    .pill {
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(79, 209, 197, 0.16);
+      border: 1px solid rgba(79, 209, 197, 0.4);
+      font-size: 0.75rem;
+      display: inline-block;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    footer {
+      margin-top: 32px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      text-align: center;
+    }
+
+    @media (max-width: 720px) {
+      .bar {
+        grid-template-columns: 1fr;
+      }
+
+      .bar span:last-child {
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>ARC Raiders Weapon Stats Dashboard</h1>
+    <p>Explore weapon performance in ARC Raiders using the latest CSV data. Filter by category, rarity, and ammo type to compare DPS, range, and other stats before you drop into the raid.</p>
+  </header>
+  <main>
+    <section class="grid stats" id="summary-cards">
+      <div class="card">
+        <h3>Total Weapons</h3>
+        <div class="value" id="total-weapons">-</div>
+      </div>
+      <div class="card">
+        <h3>Average Damage</h3>
+        <div class="value" id="avg-damage">-</div>
+      </div>
+      <div class="card">
+        <h3>Fastest Fire Rate</h3>
+        <div class="value" id="top-fire-rate">-</div>
+      </div>
+      <div class="card">
+        <h3>Longest Range</h3>
+        <div class="value" id="top-range">-</div>
+      </div>
+    </section>
+
+    <section class="filters">
+      <div>
+        <label for="search">Search</label>
+        <input type="search" id="search" placeholder="Search weapons...">
+      </div>
+      <div>
+        <label for="category">Category</label>
+        <select id="category">
+          <option value="">All categories</option>
+        </select>
+      </div>
+      <div>
+        <label for="rarity">Rarity</label>
+        <select id="rarity">
+          <option value="">All rarities</option>
+        </select>
+      </div>
+      <div>
+        <label for="ammo">Ammo Type</label>
+        <select id="ammo">
+          <option value="">All ammo</option>
+        </select>
+      </div>
+      <div>
+        <label>Sort by</label>
+        <div class="actions" id="sort-actions">
+          <button class="button" data-sort="Damage">Damage</button>
+          <button class="button" data-sort="FireRate">Fire Rate</button>
+          <button class="button" data-sort="Range">Range</button>
+          <button class="button" data-sort="DPS">DPS</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="chart">
+      <h2>Top DPS Weapons (Filtered)</h2>
+      <div class="bar-list" id="dps-chart"></div>
+    </section>
+
+    <section class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Weapon</th>
+            <th>Category</th>
+            <th>Rarity</th>
+            <th>Ammo</th>
+            <th>Mag</th>
+            <th>Damage</th>
+            <th>Fire Rate</th>
+            <th>Range</th>
+            <th>Weight</th>
+            <th>DPS</th>
+          </tr>
+        </thead>
+        <tbody id="weapon-table"></tbody>
+      </table>
+    </section>
+    <footer>Data source: arc_raiders_weapon_stats.csv</footer>
+  </main>
+
+  <script>
+    const state = {
+      weapons: [],
+      filtered: [],
+      sortKey: "",
+      sortDir: "desc",
+    };
+
+    const elements = {
+      table: document.getElementById("weapon-table"),
+      totalWeapons: document.getElementById("total-weapons"),
+      avgDamage: document.getElementById("avg-damage"),
+      topFireRate: document.getElementById("top-fire-rate"),
+      topRange: document.getElementById("top-range"),
+      search: document.getElementById("search"),
+      category: document.getElementById("category"),
+      rarity: document.getElementById("rarity"),
+      ammo: document.getElementById("ammo"),
+      sortActions: document.getElementById("sort-actions"),
+      dpsChart: document.getElementById("dps-chart"),
+    };
+
+    const numberFormatter = new Intl.NumberFormat("en-US", {
+      maximumFractionDigits: 2,
+    });
+
+    const parseCSV = (text) => {
+      const rows = [];
+      let current = [];
+      let value = "";
+      let insideQuotes = false;
+
+      for (let i = 0; i < text.length; i += 1) {
+        const char = text[i];
+        const next = text[i + 1];
+
+        if (char === '"') {
+          if (insideQuotes && next === '"') {
+            value += '"';
+            i += 1;
+          } else {
+            insideQuotes = !insideQuotes;
+          }
+          continue;
+        }
+
+        if (char === "," && !insideQuotes) {
+          current.push(value);
+          value = "";
+          continue;
+        }
+
+        if ((char === "\n" || char === "\r") && !insideQuotes) {
+          if (value.length > 0 || current.length) {
+            current.push(value);
+            if (current.some((item) => item.trim() !== "")) {
+              rows.push(current);
+            }
+          }
+          value = "";
+          current = [];
+          continue;
+        }
+
+        value += char;
+      }
+
+      if (value.length > 0 || current.length) {
+        current.push(value);
+        rows.push(current);
+      }
+
+      return rows;
+    };
+
+    const toNumber = (value) => {
+      const parsed = Number.parseFloat(value);
+      return Number.isFinite(parsed) ? parsed : null;
+    };
+
+    const loadData = async () => {
+      try {
+        const response = await fetch("arc_raiders_weapon_stats.csv");
+        const csvText = await response.text();
+        const rows = parseCSV(csvText.trim());
+        const [headers, ...dataRows] = rows;
+
+        const weapons = dataRows.map((row) => {
+          const item = {};
+          headers.forEach((header, index) => {
+            item[header.trim()] = row[index] ? row[index].trim() : "";
+          });
+
+          item.MagSize = toNumber(item.MagSize);
+          item.Damage = toNumber(item.Damage);
+          item.FireRate = toNumber(item.FireRate);
+          item.Range = toNumber(item.Range);
+          item.Weight = toNumber(item.Weight);
+          item.DPS = item.Damage && item.FireRate ? item.Damage * item.FireRate : null;
+
+          return item;
+        });
+
+        state.weapons = weapons;
+        populateFilters(weapons);
+        applyFilters();
+      } catch (error) {
+        elements.table.innerHTML = `
+          <tr>
+            <td colspan="10" class="muted">Failed to load CSV data. Ensure the CSV file is in the same directory when hosting on GitHub Pages.</td>
+          </tr>
+        `;
+      }
+    };
+
+    const populateFilters = (weapons) => {
+      const buildOptions = (select, values) => {
+        const unique = Array.from(new Set(values.filter(Boolean))).sort();
+        unique.forEach((value) => {
+          const option = document.createElement("option");
+          option.value = value;
+          option.textContent = value;
+          select.appendChild(option);
+        });
+      };
+
+      buildOptions(elements.category, weapons.map((item) => item.Category));
+      buildOptions(elements.rarity, weapons.map((item) => item.Rarity));
+      buildOptions(elements.ammo, weapons.map((item) => item.Ammo));
+    };
+
+    const applyFilters = () => {
+      const searchTerm = elements.search.value.trim().toLowerCase();
+      const category = elements.category.value;
+      const rarity = elements.rarity.value;
+      const ammo = elements.ammo.value;
+
+      let filtered = state.weapons.filter((item) => {
+        const matchesSearch = item.Weapon.toLowerCase().includes(searchTerm);
+        const matchesCategory = category ? item.Category === category : true;
+        const matchesRarity = rarity ? item.Rarity === rarity : true;
+        const matchesAmmo = ammo ? item.Ammo === ammo : true;
+        return matchesSearch && matchesCategory && matchesRarity && matchesAmmo;
+      });
+
+      if (state.sortKey) {
+        filtered = filtered.slice().sort((a, b) => {
+          const aValue = state.sortKey === "DPS" ? a.DPS : a[state.sortKey];
+          const bValue = state.sortKey === "DPS" ? b.DPS : b[state.sortKey];
+          if (aValue == null) return 1;
+          if (bValue == null) return -1;
+          return state.sortDir === "desc" ? bValue - aValue : aValue - bValue;
+        });
+      }
+
+      state.filtered = filtered;
+      updateSummary();
+      renderTable();
+      renderChart();
+    };
+
+    const updateSummary = () => {
+      const { filtered } = state;
+      if (!filtered.length) {
+        elements.totalWeapons.textContent = "0";
+        elements.avgDamage.textContent = "-";
+        elements.topFireRate.textContent = "-";
+        elements.topRange.textContent = "-";
+        return;
+      }
+
+      const avgDamage = filtered.reduce((sum, item) => sum + (item.Damage || 0), 0) / filtered.length;
+      const fastest = filtered.reduce((prev, current) =>
+        (current.FireRate || 0) > (prev.FireRate || 0) ? current : prev
+      );
+      const longest = filtered.reduce((prev, current) =>
+        (current.Range || 0) > (prev.Range || 0) ? current : prev
+      );
+
+      elements.totalWeapons.textContent = filtered.length;
+      elements.avgDamage.textContent = numberFormatter.format(avgDamage);
+      elements.topFireRate.textContent = `${fastest.Weapon} (${numberFormatter.format(fastest.FireRate)})`;
+      elements.topRange.textContent = `${longest.Weapon} (${numberFormatter.format(longest.Range)})`;
+    };
+
+    const renderTable = () => {
+      if (!state.filtered.length) {
+        elements.table.innerHTML = `
+          <tr>
+            <td colspan="10" class="muted">No weapons match the selected filters.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      elements.table.innerHTML = state.filtered
+        .map((item) => {
+          const weight = item.Weight == null ? "-" : numberFormatter.format(item.Weight);
+          const dps = item.DPS == null ? "-" : numberFormatter.format(item.DPS);
+          return `
+            <tr>
+              <td><strong>${item.Weapon}</strong></td>
+              <td>${item.Category}</td>
+              <td><span class="pill">${item.Rarity}</span></td>
+              <td>${item.Ammo}</td>
+              <td>${item.MagSize ?? "-"}</td>
+              <td>${numberFormatter.format(item.Damage ?? 0)}</td>
+              <td>${numberFormatter.format(item.FireRate ?? 0)}</td>
+              <td>${numberFormatter.format(item.Range ?? 0)}</td>
+              <td>${weight}</td>
+              <td>${dps}</td>
+            </tr>
+          `;
+        })
+        .join("");
+    };
+
+    const renderChart = () => {
+      const topWeapons = state.filtered
+        .filter((item) => item.DPS != null)
+        .sort((a, b) => b.DPS - a.DPS)
+        .slice(0, 5);
+
+      if (!topWeapons.length) {
+        elements.dpsChart.innerHTML = `<div class="muted">No DPS data available for current filters.</div>`;
+        return;
+      }
+
+      const maxDps = Math.max(...topWeapons.map((item) => item.DPS));
+      elements.dpsChart.innerHTML = topWeapons
+        .map((item) => {
+          const width = (item.DPS / maxDps) * 100;
+          return `
+            <div class="bar">
+              <strong>${item.Weapon}</strong>
+              <div class="track"><div class="fill" style="width: ${width}%;"></div></div>
+              <span>${numberFormatter.format(item.DPS)}</span>
+            </div>
+          `;
+        })
+        .join("");
+    };
+
+    elements.search.addEventListener("input", applyFilters);
+    elements.category.addEventListener("change", applyFilters);
+    elements.rarity.addEventListener("change", applyFilters);
+    elements.ammo.addEventListener("change", applyFilters);
+
+    elements.sortActions.addEventListener("click", (event) => {
+      const button = event.target.closest("button");
+      if (!button) return;
+      const sortKey = button.dataset.sort;
+      if (state.sortKey === sortKey) {
+        state.sortDir = state.sortDir === "desc" ? "asc" : "desc";
+      } else {
+        state.sortKey = sortKey;
+        state.sortDir = "desc";
+      }
+
+      Array.from(elements.sortActions.querySelectorAll("button")).forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.sort === state.sortKey);
+        btn.textContent = btn.dataset.sort;
+      });
+      button.textContent = `${sortKey} ${state.sortDir === "desc" ? "↓" : "↑"}`;
+      applyFilters();
+    });
+
+    loadData();
+  </script>
+</body>
+</html>
