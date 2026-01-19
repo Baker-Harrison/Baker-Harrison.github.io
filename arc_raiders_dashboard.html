@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arc Raiders Weapon Statistics Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/2.9.4/Chart.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .chart-container { width: 50%; margin: auto; }
+        .filter { margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Arc Raiders Weapon Statistics Dashboard</h1>
+        <div class="filter">
+            <label for="weaponType">Filter by Weapon Type:</label>
+            <select id="weaponType" class="form-control">
+                <option value="all">All</option>
+                <option value="rifles">Rifles</option>
+                <option value="pistols">Pistols</option>
+                <option value="shotguns">Shotguns</option>
+            </select>
+        </div>
+        <div class="chart-container">
+            <canvas id="weaponChart"></canvas>
+        </div>
+        <div id="dataTable" class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Weapon</th>
+                        <th>Type</th>
+                        <th>Damage</th>
+                        <th>Range</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Example Weapon 1</td>
+                        <td>Rifles</td>
+                        <td>30</td>
+                        <td>100</td>
+                    </tr>
+                    <tr>
+                        <td>Example Weapon 2</td>
+                        <td>Pistols</td>
+                        <td>25</td>
+                        <td>50</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        // JavaScript for chart and filter functionality
+        const ctx = document.getElementById('weaponChart').getContext('2d');
+        const weaponChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Example Weapon 1', 'Example Weapon 2'],
+                datasets: [{
+                    label: 'Damage',
+                    data: [30, 25],
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        $('#weaponType').change(function () {
+            // Implement filter logic here
+        });
+    </script>
+</body>
+</html>
