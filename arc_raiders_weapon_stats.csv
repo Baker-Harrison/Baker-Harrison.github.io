@@ -1,0 +1,22 @@
+Weapon,Category,Rarity,Ammo,MagSize,Damage,FireRate,Range,Weight
+Kettle,Assault Rifle,Common,Light,20,10.0,26.0,42.8,7.0
+Rattler,Assault Rifle,Common,Medium,12,9.0,33.3,56.2,6.0
+Arpeggio,Assault Rifle,Uncommon,Medium,24,9.5,18.3,55.9,
+Tempest,Assault Rifle,Epic,Medium,25,10.0,36.7,55.9,11.0
+Bettina,Assault Rifle,Epic,Heavy,22,14.0,32.0,51.3,11.0
+Ferro,Battle Rifle,Common,Heavy,1,40.0,6.6,53.1,8.0
+Renegade,Battle Rifle,Rare,Medium,8,35.0,21.0,68.8,10.0
+Aphelion,Battle Rifle,Legendary,Energy,10,25.0,9.0,76.0,10.0
+Stitcher,SMG,Common,Light,20,7.0,45.3,42.1,5.0
+Bobcat,SMG,Epic,Light,20,6.0,66.7,44.0,7.0
+Il Toro,Shotgun,Uncommon,Shotgun,5,67.5,14.3,20.0,8.0
+Vulcano,Shotgun,Epic,Shotgun,6,49.5,26.3,26.0,8.0
+Hairpin,Pistol,Common,Light,8,20.0,9.0,38.6,3.0
+Burletta,Pistol,Uncommon,Light,12,10.0,28.0,41.7,4.0
+Venator,Pistol,Rare,Medium,10,18.0,36.7,48.4,5.0
+Anvil,Hand Cannon,Uncommon,Heavy,6,40.0,16.3,50.2,5.0
+Torrente,LMG,Rare,Medium,60,8.0,58.3,49.9,12.0
+Osprey,Sniper,Rare,Medium,8,45.0,17.7,80.3,7.0
+Jupiter,Sniper,Legendary,Energy,5,60.0,7.67,71.7,9.0
+Hullcracker,Special,Epic,Launcher,5,100.0,20.3,38.9,7.0
+Equalizer,Special,Legendary,Energy,50,8.0,33.33,,14.0
